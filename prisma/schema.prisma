@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Project {
+  id        String        @id @default(uuid())
+  name      String
+  sourceUrl String
+  status    ProjectStatus @default(CREATED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  pages Page[]
+}
+
+enum ProjectStatus {
+  CREATED
+  CRAWLING
+  CRAWL_COMPLETE
+  ANALYZING
+  ANALYSIS_COMPLETE
+  GENERATING
+  COMPLETE
+  FAILED
+}
+
+model Page {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url         String
+  parentUrl   String?
+  path        String
+  title       String?
+  rawHtml     String
+  depth       Int
+  statusCode  Int
+  contentHash String
+  analysis    Analysis?
+  redesign    Redesign?
+  parsedContent ParsedContent?
+  createdAt   DateTime @default(now())
+
+
+  @@unique([projectId, url])
+  @@index([projectId, path])
+}
+
+model Analysis {
+  id            String   @id @default(uuid())
+  pageId        String   @unique
+  page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  accessibility Json
+  model         String
+  content       Json
+  design        Json
+  createdAt     DateTime @default(now())
+
+  @@unique([pageId,model])
+}
+
+model Redesign {
+  id         String   @id @default(uuid())
+  pageId     String   @unique
+  page       Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageType   String
+  layout     String
+  colors     Json
+  typography Json
+  fixes      String[]
+  createdAt  DateTime @default(now())
+}
+
+model ParsedContent {
+  id          String   @id @default(uuid())
+  pageId      String   @unique
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  headings    Json
+  paragraphs  Json
+  mainText    String
+  navigation  Json
+  metadata    Json
+  assets      Json
+  createdAt   DateTime @default(now())
+}
+
+
