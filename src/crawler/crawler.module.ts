@@ -5,10 +5,10 @@ import { CrawlerController } from "./crawler.controller";
 import { CrawlerProcessor } from "./crawler.processor";
 import { PagesModule } from "src/pages/pages.module";
 import { ParserModule } from "src/parser/parser.module";
-import { PrismaModule } from "src/common/prisma/prisma.module";
+import { BrandModule } from "src/brand/brand.module";
 
 @Module({ 
-    imports : [ProjectsModule, PagesModule, ParserModule],
+    imports : [ProjectsModule, PagesModule, ParserModule, BrandModule],
     controllers: [CrawlerController],
     providers: [CrawlerService, CrawlerProcessor],
 })

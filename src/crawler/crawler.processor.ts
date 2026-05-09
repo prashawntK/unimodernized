@@ -11,6 +11,7 @@ import { enqueue } from 'src/queue/queue.helper';
 import { BaseProcessor } from 'src/queue/base.processor';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ParserService } from 'src/parser/parser.service';
+import { BrandExtractorService } from 'src/brand/brand-extractor.service';
 
 @Injectable()
 export class CrawlerProcessor extends BaseProcessor{
@@ -21,6 +22,7 @@ export class CrawlerProcessor extends BaseProcessor{
         private pagesService: PagesService,
         private prismaService: PrismaService,
         private parserService: ParserService,
+        private brandExtractor: BrandExtractorService,
 
     ){
         super('crawl',config);
@@ -42,6 +44,7 @@ export class CrawlerProcessor extends BaseProcessor{
         try{
             await this.crawlPage(browser, projectId, project.sourceUrl,null, 0, 2, visited);
             await this.projectsService.updateStatus(projectId,ProjectStatus.CRAWL_COMPLETE);
+            await this.brandExtractor.extractBrandFromProject(projectId);
             console.log(`Crawl complete for : ${projectId}`);
         }
         finally{
