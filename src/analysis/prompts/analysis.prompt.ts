@@ -1,10 +1,20 @@
-export const ANALYSIS_PROMPT = `Analyze this university webpage for accessibility, content quality, and design issues.
+export const ANALYSIS_PROMPT = `You are a university website content analyst.
+
 URL: {url}
-HTML (truncated to first 5000 chars): {html}
+
+Page metadata:
+{metadata}
+
+Page content (main text):
+{content}
+
+Classify this page and evaluate its content quality.
 
 Respond with only valid JSON in this exact shape:
 {
-    "accessibility": { "score": <0-100>, "issues": ["..."] },
-    "content": { "score": <0-100>, "pageType": "...", "issues": ["..."] },
-    "design": { "score": <0-100>, "issues": ["..."] }
+  "content": {
+    "pageType": "HOMEPAGE | DEPARTMENT | COURSE_LISTING | FACULTY_DIRECTORY | FACULTY_PROFILE | EVENT_CALENDAR | NEWS_ARTICLE | ADMISSIONS | ABOUT | CONTACT | GENERIC",
+    "score": <0-100>,
+    "issues": ["specific content issue 1", "specific content issue 2"]
+  }
 }`;

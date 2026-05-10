@@ -11,23 +11,28 @@ export class AnalysisService {
     ) {}
 
     async analyzePage(pageId: string): Promise<void> {
-        const page = await this.prisma.page.findUnique({ where: { id: pageId } });
+        const page = await this.prisma.page.findUnique({
+             where: { id: pageId },
+             include: { parsedContent: true },
+            });
         if (!page) throw new Error(`Page ${pageId} not found`);
+        if (!page.parsedContent) throw new Error(`No Parsed content for page $(pageId)`);
 
         const prompt = ANALYSIS_PROMPT.replace('{url}',page.url)
-                                      .replace('{html}',page.rawHtml.slice(0,5000));
+                                    .replace('{metadata}', JSON.stringify(page.parsedContent.metadata))
+                                    .replace('{content}', page.parsedContent.mainText.slice(0,3000));
 
         const raw = await this.llm.complete(prompt);
         const parsed = JSON.parse(raw);
 
-        if (!parsed.accessibility || !parsed.content || !parsed.design) {
+        if ( !parsed.content ) {
             throw new Error(`AI response missing required fields: ${raw}`);
         }
 
         await this.prisma.analysis.upsert({
             where: { pageId_model: { pageId, model: 'llm' } },
-            update: { ...parsed },
-            create: { pageId, model: 'llm', ...parsed },
+            update: { content: parsed.content },
+            create: { pageId, model: 'llm', content: parsed.content },
         });
     }
 }

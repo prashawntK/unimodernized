@@ -61,10 +61,8 @@ model Analysis {
   id            String   @id @default(uuid())
   pageId        String   @unique
   page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  accessibility Json
   model         String
   content       Json
-  design        Json
   createdAt     DateTime @default(now())
 
   @@unique([pageId,model])
