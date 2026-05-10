@@ -19,6 +19,7 @@ model Project {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   pages Page[]
+  brandProfile BrandProfile?
 }
 
 enum ProjectStatus {
@@ -117,3 +118,17 @@ model Violation{
 }
 
 
+model BrandProfile {
+  id              String   @id @default(uuid())
+  projectId       String   @unique
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  primaryColor    String?
+  secondaryColor  String?
+  backgroundColor String?
+  textColor       String?
+  fontHeading     String?
+  fontBody        String?
+  logoUrl         String?
+  faviconUrl      String?
+  createdAt       DateTime @default(now())
+}
