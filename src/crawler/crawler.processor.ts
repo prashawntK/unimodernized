@@ -12,6 +12,7 @@ import { BaseProcessor } from 'src/queue/base.processor';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ParserService } from 'src/parser/parser.service';
 import { BrandExtractorService } from 'src/brand/brand-extractor.service';
+import { AccessibilityService } from 'src/accessibility/accessibility.service';
 
 @Injectable()
 export class CrawlerProcessor extends BaseProcessor{
@@ -23,6 +24,7 @@ export class CrawlerProcessor extends BaseProcessor{
         private prismaService: PrismaService,
         private parserService: ParserService,
         private brandExtractor: BrandExtractorService,
+        private accessibilityService: AccessibilityService,
 
     ){
         super('crawl',config);
@@ -88,6 +90,7 @@ export class CrawlerProcessor extends BaseProcessor{
 
             });
 
+            //Parse Content into asset, content, metadata, etc
             try{
                 const parsed = this.parserService.parse(html,baseHost);
                 await this.prismaService.parsedContent.create({
@@ -99,10 +102,37 @@ export class CrawlerProcessor extends BaseProcessor{
             }
             catch (err){
                 console.log(`Parsed failed for ${savedPage.url}`,err);
-                //this.logger.error(`Parse failed for ${savedPage.url}`, err);
-                // page is saved, parsed content is null — analysis can still run on rawHtml
             }
 
+            //Add Accessibility score from axe core
+            try{
+                const violations = await this.accessibilityService.audit(html, url);
+                await this.prismaService.auditResult.create({
+                    data:{
+                        pageId: savedPage.id,
+                        score: violations.length === 0 ? 100: Math.max(0,100 - violations.length*5),
+                        passCount: 0,
+                        failCount: violations.length,
+                        violations: {
+                            create: violations.flatMap( v => 
+                                v.nodes.map(n =>({
+                                    ruleId: v.ruleId,
+                                    impact: v.impact ?? 'unknown',
+                                    description: v.description,
+                                    helpUrl: v.helpUrl,
+                                    nodes: n,
+                                }))
+                            )
+                        }
+
+                    }
+                });
+            }  catch(err){
+                console.log(`Audit failed for ${url}`, err);
+            }
+
+
+            //Analysis sent to LLM 
             await enqueue(analysisQueue,'analyze-job', { pageId:savedPage.id });
 
             console.log(`[depth ${depth}] Crawled: ${title} — ${url}`);

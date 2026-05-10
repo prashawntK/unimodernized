@@ -6,9 +6,10 @@ import { CrawlerProcessor } from "./crawler.processor";
 import { PagesModule } from "src/pages/pages.module";
 import { ParserModule } from "src/parser/parser.module";
 import { BrandModule } from "src/brand/brand.module";
+import { AccessibilityModule } from "src/accessibility/accessibility.module";
 
 @Module({ 
-    imports : [ProjectsModule, PagesModule, ParserModule, BrandModule],
+    imports : [ProjectsModule, PagesModule, ParserModule, BrandModule,AccessibilityModule],
     controllers: [CrawlerController],
     providers: [CrawlerService, CrawlerProcessor],
 })

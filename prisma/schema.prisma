@@ -48,7 +48,9 @@ model Page {
   analysis    Analysis?
   redesign    Redesign?
   parsedContent ParsedContent?
+  auditResult AuditResult?
   createdAt   DateTime @default(now())
+
 
 
   @@unique([projectId, url])
@@ -91,6 +93,28 @@ model ParsedContent {
   metadata    Json
   assets      Json
   createdAt   DateTime @default(now())
+}
+
+model AuditResult{
+  id      String      @id @default(uuid())
+  pageId  String      @unique
+  page    Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  score   Float
+  passCount Int
+  failCount Int
+  violations Violation[]
+  auditedAt DateTime @default(now())
+}
+
+model Violation{
+  id            String  @id @default(uuid())
+  auditResultId String
+  auditResult   AuditResult @relation(fields: [auditResultId], references: [id], onDelete: Cascade)
+  ruleId        String
+  impact        String
+  description   String
+  helpUrl       String
+  nodes         Json
 }
 
 
