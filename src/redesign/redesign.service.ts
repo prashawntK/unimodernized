@@ -32,11 +32,10 @@ export class RedesignService {
             .replace('{brand}', JSON.stringify(page.project.brandProfile));
 
 
-        const raw = await this.llm.complete(prompt);
-        const parsed = JSON.parse(raw);
+        const parsed = await this.llm.completeJson(prompt);
 
         if (!parsed.pageType || !parsed.layout || !parsed.colors || !parsed.typography) {
-            throw new Error(`AI response missing required fields: ${raw}`);
+            throw new Error(`AI response missing required fields: ${parsed}`);
         }
 
         await this.prisma.redesign.upsert({

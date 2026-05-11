@@ -22,11 +22,10 @@ export class AnalysisService {
                                     .replace('{metadata}', JSON.stringify(page.parsedContent.metadata))
                                     .replace('{content}', page.parsedContent.mainText.slice(0,3000));
 
-        const raw = await this.llm.complete(prompt);
-        const parsed = JSON.parse(raw);
+        const parsed = await this.llm.completeJson(prompt);
 
         if ( !parsed.content ) {
-            throw new Error(`AI response missing required fields: ${raw}`);
+            throw new Error(`AI response missing required fields: ${parsed}`);
         }
 
         await this.prisma.analysis.upsert({
