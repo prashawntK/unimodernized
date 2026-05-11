@@ -1,11 +1,15 @@
 export const REDESIGN_PROMPT = `You are a university website redesign expert.
-Based on the HTML and analysis of this university webpage, generate a targeted redesign recommendation.
+Based on the HTML and analysis of this university webpage, and the brand profile given, generate a targeted redesign recommendation.
 
 URL: {url}
 HTML (truncated to first 5000 chars): {html}
 
 Analysis results:
-{analysis}
+{content_analysis}
+
+Use the colors and fonts from the Brand Profile as a baseline. You may modernize colors and fonts while keeping the brand identity. 
+Brand Profile:
+{brand}
 
 Respond with only valid JSON in this exact shape:
 {
