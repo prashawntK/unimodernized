@@ -13,18 +13,23 @@ export class RedesignService {
     async redesignPage(pageId: string): Promise<void> {
         const page = await this.prisma.page.findUnique({ 
             where: { id: pageId },
-            select: {
-                url:true,
-                rawHtml: true,
-                analysis:true,
-            },
+            include: {
+                analysis: true,
+                project: {
+                    select:{ brandProfile: true }
+                }
+            }
         });
         if (!page) throw new Error(`Page ${pageId} not found`);
 
+        if(page.project.brandProfile === null) throw new Error(`Brand Profile is not available for the project`);
+        if(!page.analysis) throw new Error(`No analysis found for page ${pageId}`);
+
         const prompt = REDESIGN_PROMPT
             .replace('{url}', page.url)
-             .replace('{html}', page.rawHtml.slice(0, 5000))
-            .replace('{analysis}', JSON.stringify(page.analysis));
+            .replace('{html}', page.rawHtml.slice(0, 5000))
+            .replace('{content_analysis}', JSON.stringify(page.analysis.content))
+            .replace('{brand}', JSON.stringify(page.project.brandProfile));
 
 
         const raw = await this.llm.complete(prompt);
