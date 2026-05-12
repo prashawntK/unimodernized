@@ -7,6 +7,7 @@ import { RedesignModule } from './redesign/redesign.module';
 import { ParserModule } from './parser/parser.module';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { BrandModule } from './brand/brand.module';
+import { PreviewModule } from './preview/preview.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BrandModule } from './brand/brand.module';
     ParserModule,
     PrismaModule,
     BrandModule,
+    PreviewModule,
   ],
 })
 export class AppModule {}
