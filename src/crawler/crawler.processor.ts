@@ -13,6 +13,7 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ParserService } from 'src/parser/parser.service';
 import { BrandExtractorService } from 'src/brand/brand-extractor.service';
 import { AccessibilityService } from 'src/accessibility/accessibility.service';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class CrawlerProcessor extends BaseProcessor{
@@ -25,6 +26,7 @@ export class CrawlerProcessor extends BaseProcessor{
         private parserService: ParserService,
         private brandExtractor: BrandExtractorService,
         private accessibilityService: AccessibilityService,
+        private gateway: EventsGateway,
 
     ){
         super('crawl',config);
@@ -90,6 +92,8 @@ export class CrawlerProcessor extends BaseProcessor{
 
             });
 
+            this.gateway.emitCrawlPageComplete(projectId, url);
+
             //Parse Content into asset, content, metadata, etc
             try{
                 const parsed = this.parserService.parse(html,baseHost);
@@ -133,7 +137,11 @@ export class CrawlerProcessor extends BaseProcessor{
 
 
             //Analysis sent to LLM 
-            await enqueue(analysisQueue,'analyze-job', { pageId:savedPage.id });
+            await enqueue(analysisQueue,'analyze-job', { 
+                pageId:savedPage.id, 
+                pageUrl:savedPage.url,
+                projectId,
+            });
 
             console.log(`[depth ${depth}] Crawled: ${title} — ${url}`);
 
