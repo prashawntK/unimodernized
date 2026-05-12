@@ -12,6 +12,9 @@ import { PrismaService } from './common/prisma/prisma.service';
         forbidNonWhitelisted: true,
       }
     ));
+    app.enableCors({
+      origin: 'http://localhost:5173',
+    });
     await app.listen(process.env.PORT ?? 3000);
 
     // const brandService = app.get(BrandExtractorService);
