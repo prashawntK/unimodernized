@@ -4,10 +4,11 @@ import { RedesignProcessor } from './redesign.processor';
 import { PrismaModule } from 'src/common/prisma/prisma.module';
 import { AiModule } from 'src/ai/ai.module';
 import { RedesignController } from './redesign.controller';
+import { DesignModule } from 'src/design/design.module';
 
 @Module({
     controllers: [RedesignController],
-    imports: [PrismaModule, AiModule],
+    imports: [PrismaModule, AiModule, DesignModule],
     providers: [RedesignService, RedesignProcessor],
     exports: [RedesignService],
 })

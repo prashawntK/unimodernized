@@ -69,15 +69,16 @@ model Analysis {
 }
 
 model Redesign {
-  id         String   @id @default(uuid())
-  pageId     String   @unique
-  page       Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  pageType   String
-  layout     String
-  colors     Json
-  typography Json
-  fixes      String[]
-  createdAt  DateTime @default(now())
+  id             String   @id @default(uuid())
+  pageId         String   @unique
+  page           Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageType       String
+  layout         String
+  colors         Json
+  typography     Json
+  fixes          String[]
+  modernizedHtml String?
+  createdAt      DateTime @default(now())
 }
 
 model ParsedContent {
