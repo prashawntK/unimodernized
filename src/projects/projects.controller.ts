@@ -24,6 +24,10 @@ export class ProjectsController {
     }
 
 
+    @Get()
+    async getAllProjects(){
+        return this.projectsService.getAllProjects();
+    }
 
 
 }
