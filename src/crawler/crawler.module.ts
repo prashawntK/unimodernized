@@ -7,9 +7,10 @@ import { PagesModule } from "src/pages/pages.module";
 import { ParserModule } from "src/parser/parser.module";
 import { BrandModule } from "src/brand/brand.module";
 import { AccessibilityModule } from "src/accessibility/accessibility.module";
+import { EventsModule } from "src/events/events.module";
 
 @Module({ 
-    imports : [ProjectsModule, PagesModule, ParserModule, BrandModule,AccessibilityModule],
+    imports : [ProjectsModule, PagesModule, ParserModule, BrandModule,AccessibilityModule, EventsModule],
     controllers: [CrawlerController],
     providers: [CrawlerService, CrawlerProcessor],
 })
