@@ -38,6 +38,25 @@ export class ProjectsService{
         });
     }
 
+    async getProjectPages(projectId: string){
+        return this.prisma.page.findMany({
+            where : {projectId},
+            select: {
+                id:true,
+                url:true,
+                title:true,
+                redesign:{
+                    select:{
+                        pageType:true,
+                        layout:true,
+                        modernizedHtml:true,
+                    }
+                }
+            },
+            orderBy:{createdAt: 'asc'}
+        })
+    }
+
     
 
 

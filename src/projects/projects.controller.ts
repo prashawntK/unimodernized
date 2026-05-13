@@ -18,6 +18,12 @@ export class ProjectsController {
         return project;
     } 
 
+    @Get(':id/pages')
+    async getProjectwithRedesign(@Param('id')id:string){
+        return this.projectsService.getProjectPages(id);
+       // return this.prisma.page.findMany
+    }
+
     @Post()
     async createProject( @Body() dto : CreateProjectDto) {
         return await this.projectsService.createProject(dto);

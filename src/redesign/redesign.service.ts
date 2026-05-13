@@ -50,5 +50,7 @@ export class RedesignService {
             update: { ...aiResult, modernizedHtml },
             create: { pageId, ...aiResult, modernizedHtml },
         });
+
+        console.log(`Redesign Complete for ${page.title} - ${page.url}`);
     }
 }
