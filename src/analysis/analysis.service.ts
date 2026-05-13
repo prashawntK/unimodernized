@@ -33,5 +33,7 @@ export class AnalysisService {
             update: { content: parsed.content },
             create: { pageId, model: 'llm', content: parsed.content },
         });
+
+        console.log(`Page Analysis Complete for ${page.title} - ${page.url}`);
     }
 }
