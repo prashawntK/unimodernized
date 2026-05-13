@@ -10,10 +10,10 @@ export class OpenRouterProvider implements LlmProvider {
 
     constructor(private config: ConfigService) {
         const apiKey = this.config.get<string>('OPENROUTER_API_KEY');
-        const model = this.config.get<string>('OPENROUTER_ELEPHANT');
+        const model = this.config.get<string>('OPENROUTER_INCLUSIONAI');
 
         if (!apiKey) throw new Error('OPENROUTER_API_KEY is not set in .env');
-        if (!model) throw new Error('OPENROUTER_ELEPHANT is not set in .env');
+        if (!model) throw new Error('OPENROUTER_INCLUSIONAI is not set in .env');
 
         this.client = new OpenAI({
             baseURL: 'https://openrouter.ai/api/v1',
