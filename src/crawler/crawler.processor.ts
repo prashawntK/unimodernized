@@ -39,7 +39,7 @@ export class CrawlerProcessor extends BaseProcessor{
     }
 
     async runPupeteer(projectId: string){
-        const project = await this.projectsService.getProject(projectId);
+        const project = await this.projectsService.getProjectInternal(projectId);
         if (!project) throw new Error(`Project ${projectId} not found`);
 
         const browser = await puppeteer.launch({headless:true});

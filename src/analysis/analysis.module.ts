@@ -5,9 +5,10 @@ import { AnalysisProcessor } from "./analysis.processor";
 import { AnalysisController } from "./analysis.controller";
 import { AiModule } from "src/ai/ai.module";
 import { EventsModule } from "src/events/events.module";
+import { PagesModule } from "src/pages/pages.module";
 @Module({
 
-    imports: [PrismaModule, AiModule, EventsModule],
+    imports: [PrismaModule, AiModule, EventsModule, PagesModule],
     providers: [
         AnalysisService,
         AnalysisProcessor,
