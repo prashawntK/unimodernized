@@ -8,6 +8,7 @@ import { ParserModule } from './parser/parser.module';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { BrandModule } from './brand/brand.module';
 import { PreviewModule } from './preview/preview.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PreviewModule } from './preview/preview.module';
     PrismaModule,
     BrandModule,
     PreviewModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

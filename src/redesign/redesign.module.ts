@@ -6,10 +6,11 @@ import { AiModule } from 'src/ai/ai.module';
 import { RedesignController } from './redesign.controller';
 import { DesignModule } from 'src/design/design.module';
 import { EventsModule } from 'src/events/events.module';
+import { PagesModule } from 'src/pages/pages.module';
 
 @Module({
     controllers: [RedesignController],
-    imports: [PrismaModule, AiModule, DesignModule, EventsModule],
+    imports: [PrismaModule, AiModule, DesignModule, EventsModule, PagesModule],
     providers: [RedesignService, RedesignProcessor],
     exports: [RedesignService],
 })
