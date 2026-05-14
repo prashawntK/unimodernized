@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
-import axios from 'axios'
 import { io } from 'socket.io-client'
+import api from "../api/axios"
 
 const API = 'http://localhost:3000'
 const socket = io(API)
@@ -20,8 +20,8 @@ function ProjectDetail() {
         socket.on('crawl:page-complete', (data)=>{
             setEvents(prev =>[...prev, `${data.timeStamp} - ${data.pageUrl}`])
         })
-        axios.get(`${API}/projects/${id}`).then(result => setProject(result.data));
-        axios.get(`${API}/projects/${id}/pages`).then(r => setPages(r.data));
+        api.get(`/projects/${id}`).then(result => setProject(result.data));
+        api.get(`/projects/${id}/pages`).then(r => setPages(r.data));
 
         return () =>{
             socket.off('crawl:page-complete')
@@ -29,7 +29,7 @@ function ProjectDetail() {
     },[])
 
     async function startCrawling(){
-        await axios.post(`${API}/crawl`, {projectId: id})
+        await api.post(`/crawl`, {projectId: id})
     }
 
     function renderButton(){

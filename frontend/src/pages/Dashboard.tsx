@@ -1,6 +1,6 @@
 import {  useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
 
 const API = 'http://localhost:3000'
 
@@ -15,14 +15,14 @@ function Dashboard() {
 
 
   useEffect(()=>{
-    axios.get(`${API}/projects`).then(res => setProjects(res.data));
+    api.get(`/projects`).then(res => setProjects(res.data));
   }, [])
 
   async function createProject(e:React.FormEvent){
     e.preventDefault();
-    await axios.post(`${API}/projects`, {name, sourceUrl})
+    await api.post(`/projects`, {name, sourceUrl})
 
-    const res = await axios.get(`${API}/projects`)
+    const res = await api.get(`/projects`)
     setProjects(res.data)
     setName('')
     setSourceUrl('')
