@@ -1,13 +1,13 @@
 import {  useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-const API = 'http://localhost:3000'
+import api from '../api/axios';
+import { useAuth } from '../auth/AuthContext';
 
 
 function Dashboard() {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const [name, setName] = useState('');
   const [projects, setProjects] = useState([]);
@@ -15,27 +15,39 @@ function Dashboard() {
 
 
   useEffect(()=>{
-    axios.get(`${API}/projects`).then(res => setProjects(res.data));
+    api.get(`/projects`).then(res => setProjects(res.data));
   }, [])
 
   async function createProject(e:React.FormEvent){
     e.preventDefault();
-    await axios.post(`${API}/projects`, {name, sourceUrl})
+    await api.post(`/projects`, {name, sourceUrl})
 
-    const res = await axios.get(`${API}/projects`)
+    const res = await api.get(`/projects`)
     setProjects(res.data)
     setName('')
     setSourceUrl('')
+  }
 
+  function handleLogout(){
+    logout();
+    navigate('/login');
   }
 
 return (
     
   <div className="min-h-screen bg-gray-950 text-white">
     {/* Header */}
-    <div className="border-b border-gray-800 px-8 py-4">
-      <h1 className="text-2xl font-bold">UniModernize</h1>
-    </div>
+    {/* Header */}
+  <div className="border-b border-gray-800 px-8 py-4 flex justify-between items-center">
+    <h1 className="text-2xl font-bold">UniModernize</h1>
+    <button
+      onClick={handleLogout}
+      className="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-4 py-2 rounded-lg text-sm font-medium"
+    >
+      Log out
+    </button>
+  </div>
+
 
     <div className="max-w-4xl mx-auto px-8 py-10">
 

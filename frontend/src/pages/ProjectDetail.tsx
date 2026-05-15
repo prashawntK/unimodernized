@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
-import axios from 'axios'
 import { io } from 'socket.io-client'
+import api from "../api/axios"
 
 const API = 'http://localhost:3000'
 const socket = io(API)
@@ -14,22 +14,33 @@ function ProjectDetail() {
     const [project, setProject] = useState<any>(null);
     const [pages, setPages] = useState<any>([]);
     const [selectedPageId, setSelectedPageId] = useState<string | null> (null)
+    const [previewHTML, setPreviewHTML] = useState('');
 
     useEffect(()=>{
         socket.emit('join-project', id);
         socket.on('crawl:page-complete', (data)=>{
             setEvents(prev =>[...prev, `${data.timeStamp} - ${data.pageUrl}`])
         })
-        axios.get(`${API}/projects/${id}`).then(result => setProject(result.data));
-        axios.get(`${API}/projects/${id}/pages`).then(r => setPages(r.data));
+        api.get(`/projects/${id}`).then(result => setProject(result.data));
+        api.get(`/projects/${id}/pages`).then(r => setPages(r.data));
 
         return () =>{
             socket.off('crawl:page-complete')
         }
     },[])
 
+    function openPreview(pageId){
+        setSelectedPageId(pageId);
+        api.get(`/preview/${id}/${pageId}`).then(r=> setPreviewHTML(r.data));
+    }
+
+    function closePreview(){
+        setSelectedPageId(null);
+        setPreviewHTML('');
+    }
+
     async function startCrawling(){
-        await axios.post(`${API}/crawl`, {projectId: id})
+        await api.post(`/crawl`, {projectId: id})
     }
 
     function renderButton(){
@@ -75,7 +86,7 @@ function ProjectDetail() {
                                 <p className="text-xs text-gray-400">{p.url}</p>
                             </div>
                             {p.redesign ? (
-                                <button onClick={() => setSelectedPageId(p.id)}
+                                <button onClick={() => openPreview(p.id)}
                                     className="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-xs">
                                     View Preview
                                 </button>
@@ -89,7 +100,7 @@ function ProjectDetail() {
 
             {selectedPageId && (
                 <div 
-                    onClick={() => setSelectedPageId(null)}
+                    onClick={closePreview}
                     className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-8"
                 >
                     <div 
@@ -98,7 +109,7 @@ function ProjectDetail() {
                     >
                         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
                             <h2 className="text-lg font-semibold">Before / After</h2>
-                            <button onClick={() => setSelectedPageId(null)} className="text-gray-400 hover:text-white text-xl">×</button>
+                            <button onClick={closePreview} className="text-gray-400 hover:text-white text-xl">×</button>
                         </div>
                         
                         <div className="flex-1 flex gap-2 p-4">
@@ -123,7 +134,7 @@ function ProjectDetail() {
                             <div className="flex-1 flex flex-col">
                                 <p className="text-xs text-gray-400 mb-2 uppercase tracking-wide">Modernized</p>
                                 <iframe 
-                                    src={`${API}/preview/${id}/${selectedPageId}`}
+                                    srcDoc={previewHTML}
                                     className="flex-1 bg-white rounded-lg"
                                 />
                             </div>
